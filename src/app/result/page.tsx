@@ -1,14 +1,14 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { resultLabel, compatibility, tips } from "@/lib/scoring";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
-import { ResultSection } from "@/components/templates/ResultSection";
+import Link from "next/link";
 
-export default function ResultPage() {
+function ResultContent() {
   const sp = useSearchParams();
   const gender = (sp.get("g") ?? "") as ""|"남"|"녀";
   const energy = (sp.get("e") ?? "밸런스") as "테토"|"에겐"|"밸런스";
@@ -445,13 +445,13 @@ export default function ResultPage() {
             링크 복사
           </Button>
           
-          <a 
+          <Link 
             href="/" 
             className="h-11 bg-surface/80 hover:bg-surface border border-border hover:border-white/30 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-[1.02] text-white hover:text-white"
           >
             <span className="mr-2">🔄</span>
             다시 하기
-          </a>
+          </Link>
         </div>
 
         {/* 추가 공유 옵션 */}
@@ -602,5 +602,34 @@ export default function ResultPage() {
         </div>
       </Modal>
     </main>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <main className="space-y-6 animate-in fade-in duration-700">
+      <div className="text-center space-y-4">
+        <div className="w-16 h-6 bg-border rounded-full mx-auto animate-pulse"></div>
+        <div className="w-32 h-8 bg-border rounded-lg mx-auto animate-pulse"></div>
+        <div className="w-24 h-4 bg-border rounded mx-auto animate-pulse"></div>
+      </div>
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="p-4 bg-surface rounded-xl animate-pulse">
+          <div className="w-24 h-4 bg-border rounded mb-3"></div>
+          <div className="space-y-2">
+            <div className="w-full h-3 bg-border rounded"></div>
+            <div className="w-3/4 h-3 bg-border rounded"></div>
+          </div>
+        </div>
+      ))}
+    </main>
+  );
+}
+
+export default function ResultPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <ResultContent />
+    </Suspense>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { QUESTIONS, STEPS } from "@/lib/questions";
 import { computeScores } from "@/lib/scoring";
@@ -10,7 +10,7 @@ import Button from "@/components/ui/Button";
 import LoadingScreen from "@/components/LoadingScreen";
 import { QuestionCard } from "@/components/templates/QuestionCard";
 
-export default function TestPage() {
+function TestContent() {
   const sp = useSearchParams();
   const router = useRouter();
   const gender = (sp.get("g") ?? "") as ""|"남"|"녀";
@@ -98,5 +98,47 @@ export default function TestPage() {
         📱 PC에서도 모바일 프레임(420px)로 동일 표시
       </p>
     </main>
+  );
+}
+
+function TestLoadingFallback() {
+  return (
+    <main className="space-y-4">
+      <div className="h-2 w-full bg-border rounded-full overflow-hidden">
+        <div className="h-full bg-brand animate-pulse" style={{ width: "0%" }} />
+      </div>
+      
+      <div className="flex items-center justify-between">
+        <div className="w-32 h-6 bg-border rounded animate-pulse"></div>
+        <div className="flex gap-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="w-2.5 h-2.5 bg-border rounded-full animate-pulse"></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="rounded-xl border border-border bg-surface p-4 animate-pulse">
+            <div className="w-3/4 h-4 bg-border rounded mb-3"></div>
+            <div className="grid grid-cols-5 gap-2">
+              {[...Array(5)].map((_, j) => (
+                <div key={j} className="h-10 bg-border rounded-lg"></div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="w-full h-11 bg-border rounded-xl animate-pulse"></div>
+    </main>
+  );
+}
+
+export default function TestPage() {
+  return (
+    <Suspense fallback={<TestLoadingFallback />}>
+      <TestContent />
+    </Suspense>
   );
 }

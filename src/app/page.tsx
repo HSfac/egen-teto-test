@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import Image from "next/image";
 import ToggleChip from "@/components/ToggleChip";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -81,7 +80,7 @@ export default function Home() {
               { key:"녀", label:"👩 여자" },
             ]}
             value={label}
-            onChange={setLabel}
+            onChange={(value) => setLabel(value as "남"|"녀"|"")}
             allowNone
           />
           <div className="text-xs text-muted/70 text-center">

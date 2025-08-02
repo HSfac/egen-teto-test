@@ -36,7 +36,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       clearInterval(interval);
       clearInterval(messageInterval);
     };
-  }, [onComplete]);
+  }, [onComplete, messages.length]);
 
   return (
     <div className="fixed inset-0 bg-bg/95 backdrop-blur-sm flex items-center justify-center z-50">
