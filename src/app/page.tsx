@@ -1,103 +1,116 @@
+"use client";
+import Link from "next/link";
+import { useState } from "react";
 import Image from "next/image";
+import ToggleChip from "@/components/ToggleChip";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [label, setLabel] = useState<"남"|"녀"|"">("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  return (
+    <main className="space-y-8 animate-in fade-in duration-700">
+      {/* 히어로 섹션 */}
+      <div className="text-center space-y-4">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-brand/20 via-transparent to-brand/20 blur-3xl -z-10"></div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-white to-brand bg-clip-text text-transparent">
+            에겐/테토 에너지 테스트
+          </h1>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <p className="text-muted text-sm leading-relaxed">
+          요즘 핫한 성격 유형 테스트 ✨<br/>
+          <span className="text-xs">24문항 · 1~2분 · 오락용(의학 아님)</span>
+        </p>
+      </div>
+
+      {/* 캐릭터 이미지 영역 */}
+      <div className="flex justify-center">
+        <Card className="p-6 bg-gradient-to-br from-surface to-surface/60 border-brand/20">
+          <div className="grid grid-cols-2 gap-4 items-center">
+            <div className="text-center space-y-2">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-brand/30 to-brand/10 rounded-full flex items-center justify-center">
+                {/* 에겐남 이미지 자리 */}
+                <span className="text-2xl">🧘‍♂️</span>
+              </div>
+              <div className="text-xs text-muted">에겐남</div>
+              <div className="text-xs text-brand font-medium">조화·공감형</div>
+            </div>
+            <div className="text-center space-y-2">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-danger/30 to-danger/10 rounded-full flex items-center justify-center">
+                {/* 테토남 이미지 자리 */}
+                <span className="text-2xl">💪</span>
+              </div>
+              <div className="text-xs text-muted">테토남</div>
+              <div className="text-xs text-danger font-medium">직설·추진형</div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* 통계 섹션 */}
+      <Card className="p-4 bg-gradient-to-r from-surface/80 to-surface border-border/50">
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <div className="text-lg font-bold text-brand">24</div>
+            <div className="text-xs text-muted">문항</div>
+          </div>
+          <div>
+            <div className="text-lg font-bold text-success">1-2분</div>
+            <div className="text-xs text-muted">소요시간</div>
+          </div>
+          <div>
+            <div className="text-lg font-bold text-warning">🔥</div>
+            <div className="text-xs text-muted">요즘 핫함</div>
+          </div>
+        </div>
+      </Card>
+
+      {/* 설정 섹션 */}
+      <Card className="p-5 space-y-4">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">👤 성별 선택</span>
+            <span className="text-xs text-muted">(선택사항)</span>
+          </div>
+          <ToggleChip
+            items={[
+              { key:"", label:"선택안함" },
+              { key:"남", label:"👨 남자" },
+              { key:"녀", label:"👩 여자" },
+            ]}
+            value={label}
+            onChange={setLabel}
+            allowNone
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <div className="text-xs text-muted/70 text-center">
+            💡 결과에 성별이 반영됩니다 (예: 테토남, 에겐녀)
+          </div>
+        </div>
+      </Card>
+
+      {/* CTA 섹션 */}
+      <div className="space-y-4">
+        <Link
+          href={`/test?g=${encodeURIComponent(label)}`}
+          className="block"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <Button className="w-full h-12 text-base font-bold bg-gradient-to-r from-brand to-brand/80 hover:from-brand/90 hover:to-brand/70 shadow-brand transition-all duration-300 hover:scale-[1.02] group">
+            <span className="inline-block rocket-hover">🚀</span>
+            <span className="ml-2">테스트 시작하기</span>
+          </Button>
+        </Link>
+        
+        <div className="text-center space-y-2">
+          <div className="text-xs text-muted/80">
+            📱 PC에서도 모바일 뷰로 최적화
+          </div>
+          <div className="text-xs text-muted/60">
+            * SNS 유행 밈에서 착안한 자기이해 도구입니다
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

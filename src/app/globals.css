@@ -1,26 +1,243 @@
 @import "tailwindcss";
 
+/* 디자인 토큰 (다크 테마 기본) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand: #2E74FF;
+  --bg: #0B0B0F;
+  --surface: #15151C;
+  --border: #2A2A33;
+  --text: #FFFFFF;
+  --muted: #9BA3AF;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* 브랜드 컬러 */
+  --color-brand: var(--brand);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  
+  /* 그림자 */
+  --shadow-brand: 0 8px 24px rgba(46,116,255,0.25);
+  --shadow-soft: 0 4px 16px rgba(0,0,0,0.25);
+  
+  /* 보더 라디우스 */
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  
+  /* 폰트 */
+  --font-sans: system-ui, -apple-system, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+}
+
+/* PC에서도 모바일처럼 보이는 프레임 */
+.mobile-frame {
+  max-width: 420px;
+  width: 100%;
+}
+
+/* 스크롤바 최소화 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+}
+
+/* 포커스 링 일관화 */
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(46,116,255,0.6);
+}
+
+/* 인터랙션 기본 */
+.tap {
+  transition: transform 200ms ease-out;
+}
+
+.tap:active {
+  transform: translateY(1px);
+}
+
+/* 애니메이션 키프레임 */
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-from-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 애니메이션 클래스 */
+.animate-in {
+  animation: animate-in 0.6s ease-out;
+}
+
+.slide-in-from-top {
+  animation: slide-in-from-top 0.5s ease-out;
+}
+
+.slide-in-from-bottom {
+  animation: slide-in-from-bottom 0.5s ease-out;
+}
+
+.slide-in-from-left {
+  animation: slide-in-from-left 0.5s ease-out;
+}
+
+.slide-in-from-right {
+  animation: slide-in-from-right 0.5s ease-out;
+}
+
+.fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.zoom-in {
+  animation: zoom-in 0.5s ease-out;
+}
+
+/* 애니메이션 duration 클래스 */
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
+.duration-700 {
+  animation-duration: 700ms;
+}
+
+/* 애니메이션 delay 클래스 */
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+.delay-600 {
+  animation-delay: 600ms;
+}
+
+.delay-700 {
+  animation-delay: 700ms;
+}
+
+/* 로켓 애니메이션 */
+@keyframes rocket-launch {
+  0% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(2px) translateY(-2px) rotate(5deg);
+  }
+  50% {
+    transform: translateX(4px) translateY(-4px) rotate(-5deg);
+  }
+  75% {
+    transform: translateX(6px) translateY(-2px) rotate(5deg);
+  }
+  100% {
+    transform: translateX(8px) translateY(0) rotate(0deg);
+  }
+}
+
+.rocket-hover:hover {
+  animation: rocket-launch 0.6s ease-in-out infinite;
 }
