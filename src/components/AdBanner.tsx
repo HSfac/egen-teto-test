@@ -1,10 +1,17 @@
 "use client";
 import { useState } from "react";
+import Modal from "./ui/Modal";
 
 export default function AdBanner() {
   const [isVisible, setIsVisible] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!isVisible) return null;
+
+  const handleEmailInquiry = () => {
+    window.open('mailto:homecreator.ai@gmail.com?subject=에겐/테토 테스트 광고 문의&body=안녕하세요. 에겐/테토 테스트 관련 광고 협력 및 제휴 문의드립니다.');
+    setIsModalOpen(false);
+  };
 
   return (
     <>
@@ -50,10 +57,16 @@ export default function AdBanner() {
 
       {/* 모바일용 우측하단 배너 */}
       <div className="md:hidden fixed bottom-4 right-4 z-50">
-        <div className="bg-gradient-to-br from-brand/95 to-brand text-black rounded-full p-3 shadow-brand backdrop-blur-sm tap">
+        <div 
+          className="bg-gradient-to-br from-brand/95 to-brand text-black rounded-full p-3 shadow-brand backdrop-blur-sm cursor-pointer hover:scale-105 transition-transform duration-200"
+          onClick={() => setIsModalOpen(true)}
+        >
           <button 
-            onClick={() => setIsVisible(false)}
-            className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center text-xs font-bold"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsVisible(false);
+            }}
+            className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center text-xs font-bold z-10"
           >
             ×
           </button>
@@ -63,6 +76,42 @@ export default function AdBanner() {
           </div>
         </div>
       </div>
+
+      {/* 모바일 광고문의 모달 */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title="광고 문의"
+      >
+        <div className="text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="w-16 h-16 bg-brand/20 rounded-xl flex items-center justify-center">
+              <span className="text-4xl">💼</span>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <h3 className="text-lg font-bold text-white">에겐/테토 테스트</h3>
+            <p className="text-muted">광고 협력 및 제휴 문의</p>
+          </div>
+          
+          <div className="text-sm text-muted leading-relaxed">
+            <p>브랜드 협력, 광고 제휴, 마케팅 협업 등</p>
+            <p>다양한 제안을 기다리고 있습니다.</p>
+          </div>
+          
+          <div className="space-y-3">
+            <button 
+              onClick={handleEmailInquiry}
+              className="w-full bg-brand hover:bg-brand/90 text-black font-bold py-3 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
+            >
+              <span className="text-lg">📧</span>
+              문의하기
+            </button>
+            <p className="text-xs text-muted">빠른 답변 보장 ⚡</p>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }
