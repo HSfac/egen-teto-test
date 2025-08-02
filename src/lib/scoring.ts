@@ -21,10 +21,28 @@ export function computeScores(answers: Record<number, number>, questions: Q[]) {
   return { T, E, delta, energy, strength };
 }
 
-export function resultLabel(energy: "테토"|"에겐"|"밸런스", gender: GenderLabel) {
-  if (energy === "밸런스") return "밸런스형";
-  if (gender) return `${energy}${gender}`;
-  return `${energy}형`;
+export function resultLabel(energy: "테토"|"에겐"|"밸런스", gender: GenderLabel, strength: string, delta: number) {
+  if (energy === "밸런스") {
+    // 밸런스도 세분화
+    if (Math.abs(delta) <= 2) return gender ? `완전밸런스${gender}` : "완전밸런스형";
+    return gender ? `밸런스${gender}` : "밸런스형";
+  }
+  
+  // 강도별 라벨 매핑
+  const intensityLabels: Record<"테토"|"에겐", Record<string, string>> = {
+    테토: {
+      L: gender ? `극테토${gender}` : "극테토형",      // |Δ| ≥ 12
+      M: gender ? `강테토${gender}` : "강테토형",      // 8 ≤ |Δ| < 12  
+      S: gender ? `약테토${gender}` : "약테토형"       // |Δ| < 8
+    },
+    에겐: {
+      L: gender ? `극에겐${gender}` : "극에겐형",      // |Δ| ≥ 12
+      M: gender ? `강에겐${gender}` : "강에겐형",      // 8 ≤ |Δ| < 12
+      S: gender ? `약에겐${gender}` : "약에겐형"       // |Δ| < 8
+    }
+  };
+  
+  return (intensityLabels[energy as "테토"|"에겐"])?.[strength] || `${energy}${gender || "형"}`;
 }
 
 export function compatibility(energy: "테토"|"에겐"|"밸런스") {

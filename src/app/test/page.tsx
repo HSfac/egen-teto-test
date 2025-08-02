@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState, Suspense } from "react";
+import { useMemo, useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { QUESTIONS, STEPS } from "@/lib/questions";
 import { computeScores } from "@/lib/scoring";
@@ -17,10 +17,74 @@ function TestContent() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
 
   const current = useMemo(()=>{
     const { range } = STEPS[step];
     return QUESTIONS.filter(q => q.id >= range[0] && q.id <= range[1]);
+  }, [step]);
+
+  // 스텝이 변경될 때마다 화면 상단으로 스크롤
+  useEffect(() => {
+    const scrollToTop = () => {
+      // 여러 방법을 순차적으로 시도해서 확실하게 스크롤
+      try {
+        // 방법 1: 브라우저 호환성을 위한 즉시 스크롤 (fallback)
+        window.scrollTo(0, 0);
+        
+        // 방법 2: 부드러운 스크롤 시도
+        if (window.scrollTo && typeof window.scrollTo === 'function') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 방법 3: document.documentElement 시도 (일부 브라우저에서 필요)
+        if (document.documentElement && document.documentElement.scrollTo) {
+          document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 방법 4: document.body 시도 (모바일에서 때때로 필요)
+        if (document.body && document.body.scrollTo) {
+          document.body.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 방법 5: main 요소로 직접 스크롤 (가장 확실한 방법)
+        if (mainRef.current) {
+          mainRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+        
+        // 방법 6: 모바일에서 viewport 기준 스크롤
+        if ('scrollingElement' in document && document.scrollingElement) {
+          document.scrollingElement.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+      } catch (error) {
+        // 모든 시도가 실패한 경우 최종 fallback
+        console.warn('스크롤 실패, fallback 사용:', error);
+        try {
+          window.scrollTo(0, 0);
+          if (mainRef.current) {
+            mainRef.current.scrollIntoView();
+          }
+        } catch (fallbackError) {
+          console.error('fallback 스크롤도 실패:', fallbackError);
+        }
+      }
+    };
+
+    // 렌더링 완료를 위한 지연
+    const timeoutId = setTimeout(scrollToTop, 50);
+    
+    // 추가 보정을 위한 두 번째 시도
+    const secondTimeoutId = setTimeout(scrollToTop, 200);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      clearTimeout(secondTimeoutId);
+    };
   }, [step]);
 
   function setAnswer(id: number, v: number) {
@@ -32,8 +96,7 @@ function TestContent() {
   function next() {
     if (step < STEPS.length - 1) {
       setStep(step + 1);
-      // 다음 단계로 넘어갈 때 화면 상단으로 부드럽게 스크롤
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // useEffect에서 자동으로 스크롤 처리됨
     } else {
       setIsLoading(true);
     }
@@ -52,8 +115,7 @@ function TestContent() {
 
   function handleStepJump(newStep: number) {
     setStep(newStep);
-    // 스텝 점프 시에도 화면 상단으로 부드럽게 스크롤
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // useEffect에서 자동으로 스크롤 처리됨
   }
 
   if (isLoading) {
@@ -61,7 +123,7 @@ function TestContent() {
   }
 
   return (
-    <main className="space-y-4 animate-in slide-in-from-right duration-500">
+    <main ref={mainRef} className="space-y-4 animate-in slide-in-from-right duration-500">
       <Progress value={progress} />
       
       <div className="flex items-center justify-between">

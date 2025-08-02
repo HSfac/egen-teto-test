@@ -19,7 +19,7 @@ function ResultContent() {
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
   const [isCompatibilityModalOpen, setIsCompatibilityModalOpen] = useState(false);
 
-  const label = resultLabel(energy, gender);
+  const label = resultLabel(energy, gender, strength, delta);
   const comp = compatibility(energy);
   const t = tips(energy);
 
@@ -65,103 +65,114 @@ function ResultContent() {
   const config = energyConfig[energy];
 
   // 유형별 상세 설명
-  const detailDescriptions = {
-    테토: {
-      title: "테토 타입 완전 분석 💪",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold text-white mb-2">🔥 테토 에너지란?</h3>
-            <p className="text-sm leading-relaxed">
-              테스토스테론 에너지에서 유래된 성향으로, <strong>주도적이고 직설적인 성격</strong>을 의미합니다. 
-              목표 지향적이며 빠른 의사결정을 선호하는 타입이에요.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-2">💼 직장에서의 테토</h3>
-            <p className="text-sm leading-relaxed">
-              • 리더십 역할을 자연스럽게 맡음<br/>
-              • 빠른 결정과 실행력으로 성과 창출<br/>
-              • 직설적 소통으로 효율성 추구<br/>
-              • 경쟁적 환경에서 더욱 빛남
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-2">💕 연애에서의 테토</h3>
-            <p className="text-sm leading-relaxed">
-              • 적극적이고 주도적인 어프로치<br/>
-              • 솔직한 감정 표현을 선호<br/>
-              • 계획보다는 즉흥성을 좋아함<br/>
-              • 상대방을 리드하는 것을 선호
-            </p>
-          </div>
-        </div>
-      )
-    },
-    에겐: {
-      title: "에겐 타입 완전 분석 🧘‍♂️",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold text-white mb-2">🌸 에겐 에너지란?</h3>
-            <p className="text-sm leading-relaxed">
-              에스트로겐 에너지에서 유래된 성향으로, <strong>공감적이고 조화로운 성격</strong>을 의미합니다. 
-              관계 중심적이며 신중한 의사결정을 선호하는 타입이에요.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-2">💼 직장에서의 에겐</h3>
-            <p className="text-sm leading-relaxed">
-              • 팀 화합과 조율 능력이 뛰어남<br/>
-              • 신중한 분석 후 결정을 내림<br/>
-              • 감정적 지지와 배려심이 강함<br/>
-              • 협력적 환경에서 최고 성과 발휘
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-2">💕 연애에서의 에겐</h3>
-            <p className="text-sm leading-relaxed">
-              • 세심하고 배려깊은 애정 표현<br/>
-              • 상대방의 감정에 민감하게 반응<br/>
-              • 안정적이고 계획적인 관계 선호<br/>
-              • 깊은 감정적 교감을 중시
-            </p>
-          </div>
-        </div>
-      )
-    },
-    밸런스: {
-      title: "밸런스 타입 완전 분석 ⚖️",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold text-white mb-2">🌟 밸런스 에너지란?</h3>
-            <p className="text-sm leading-relaxed">
-              테토와 에겐 성향이 균형잡힌 타입으로, <strong>상황에 따라 유연하게 적응</strong>하는 성격입니다. 
-              상황판단력이 뛰어나며 중간자 역할을 잘 해내는 타입이에요.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-2">💼 직장에서의 밸런스</h3>
-            <p className="text-sm leading-relaxed">
-              • 상황에 맞는 리더십과 팔로워십 발휘<br/>
-              • 다양한 의견을 조율하는 능력<br/>
-              • 팀의 완충 역할을 자연스럽게 수행<br/>
-              • 변화하는 환경에 빠르게 적응
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-2">💕 연애에서의 밸런스</h3>
-            <p className="text-sm leading-relaxed">
-              • 상대방의 성향에 맞춰 유연하게 대응<br/>
-              • 때로는 주도하고 때로는 따라가는 밸런스<br/>
-              • 갈등 상황에서 중재 역할을 잘함<br/>
-              • 안정적이면서도 역동적인 관계 추구
-            </p>
-          </div>
-        </div>
-      )
-    }
+  const getDetailDescription = () => {
+    const baseTitle = energy === "밸런스" ? 
+      (Math.abs(delta) <= 2 ? "완전밸런스 타입 완전 분석 ⚖️" : "밸런스 타입 완전 분석 ⚖️") :
+      `${label} 완전 분석 ${energy === "테토" ? "💪" : "🧘‍♂️"}`;
+    
+    return {
+      title: baseTitle,
+      content: (() => {
+        if (energy === "테토") {
+          return (
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-white mb-2">🔥 {label.replace(/[남녀형]/g, '')} 에너지란?</h3>
+                <p className="text-sm leading-relaxed">
+                  테스토스테론 에너지에서 유래된 성향으로, <strong>주도적이고 직설적인 성격</strong>을 의미합니다.
+                  {strength === "L" ? " 극도로 강한 추진력과 지배적 성향을 보입니다." :
+                   strength === "M" ? " 뚜렷한 리더십과 결단력을 보입니다." :
+                   " 온화한 리더십과 신중한 추진력을 보입니다."}
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-2">💼 직장에서의 특성</h3>
+                <p className="text-sm leading-relaxed">
+                  {strength === "L" ? 
+                    "• 강력한 카리스마로 팀을 이끔\n• 빠르고 과감한 의사결정\n• 목표 달성을 위한 강한 추진력\n• 경쟁 상황에서 최고 성과 발휘" :
+                   strength === "M" ?
+                    "• 리더십 역할을 자연스럽게 맡음\n• 빠른 결정과 실행력으로 성과 창출\n• 직설적 소통으로 효율성 추구\n• 경쟁적 환경에서 더욱 빛남" :
+                    "• 부드러운 리더십으로 팀 이끔\n• 신중하면서도 결단력 있는 의사결정\n• 협력적 추진으로 성과 창출\n• 안정적인 환경에서 능력 발휘"}
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-2">💕 연애에서의 특성</h3>
+                <p className="text-sm leading-relaxed">
+                  {strength === "L" ?
+                    "• 매우 적극적이고 주도적인 어프로치\n• 강한 소유욕과 보호욕\n• 즉흥적이고 열정적인 데이트\n• 확실한 리드를 통한 관계 주도" :
+                   strength === "M" ?
+                    "• 적극적이고 주도적인 어프로치\n• 솔직한 감정 표현을 선호\n• 계획보다는 즉흥성을 좋아함\n• 상대방을 리드하는 것을 선호" :
+                    "• 은은하게 리드하는 스타일\n• 배려 있는 솔직한 소통\n• 계획적이면서도 유연한 데이트\n• 상대방 의견을 존중하며 리드"}
+                </p>
+              </div>
+            </div>
+          );
+        } else if (energy === "에겐") {
+          return (
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-white mb-2">🌸 {label.replace(/[남녀형]/g, '')} 에너지란?</h3>
+                <p className="text-sm leading-relaxed">
+                  에스트로겐 에너지에서 유래된 성향으로, <strong>공감적이고 조화로운 성격</strong>을 의미합니다.
+                  {strength === "L" ? " 극도로 높은 공감 능력과 조화 추구 성향을 보입니다." :
+                   strength === "M" ? " 뚜렷한 배려심과 중재 능력을 보입니다." :
+                   " 은은한 공감력과 평화로운 분위기 조성 능력을 보입니다."}
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-2">💼 직장에서의 특성</h3>
+                <p className="text-sm leading-relaxed">
+                  {strength === "L" ?
+                    "• 뛰어난 팀 화합과 갈등 조정 능력\n• 모든 구성원의 감정까지 세심하게 배려\n• 완벽한 협력 환경 조성\n• 스트레스 상황에서도 팀 안정감 유지" :
+                   strength === "M" ?
+                    "• 팀 화합과 조율 능력이 뛰어남\n• 신중한 분석 후 결정을 내림\n• 감정적 지지와 배려심이 강함\n• 협력적 환경에서 최고 성과 발휘" :
+                    "• 자연스러운 분위기 메이킹\n• 차분하고 신중한 의사결정\n• 은은한 배려로 팀 서포트\n• 평화로운 업무 환경 선호"}
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-2">💕 연애에서의 특성</h3>
+                <p className="text-sm leading-relaxed">
+                  {strength === "L" ?
+                    "• 극도로 세심하고 헌신적인 애정 표현\n• 상대방의 모든 감정 변화 감지\n• 완벽한 안정감을 주는 관계\n• 깊고 진실한 감정적 교감 추구" :
+                   strength === "M" ?
+                    "• 세심하고 배려깊은 애정 표현\n• 상대방의 감정에 민감하게 반응\n• 안정적이고 계획적인 관계 선호\n• 깊은 감정적 교감을 중시" :
+                    "• 은은하고 자연스러운 애정 표현\n• 적당한 거리감과 배려\n• 편안하고 평화로운 관계\n• 소소한 일상의 행복을 중시"}
+                </p>
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-white mb-2">🌟 {label.replace(/[남녀형]/g, '')} 에너지란?</h3>
+                <p className="text-sm leading-relaxed">
+                  테토와 에겐 성향이 균형잡힌 타입으로, <strong>상황에 따라 유연하게 적응</strong>하는 성격입니다.
+                  {Math.abs(delta) <= 2 ? " 거의 완벽한 균형으로 어떤 상황에서도 적절히 대응할 수 있습니다." :
+                   " 상황판단력이 뛰어나며 중간자 역할을 잘 해내는 타입이에요."}
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-2">💼 직장에서의 특성</h3>
+                <p className="text-sm leading-relaxed">
+                  {Math.abs(delta) <= 2 ?
+                    "• 완벽한 리더십과 팔로워십의 균형\n• 모든 팀원과 원활한 소통\n• 어떤 역할이든 완벽하게 소화\n• 변화와 안정 모두에서 뛰어남" :
+                    "• 상황에 맞는 리더십과 팔로워십 발휘\n• 다양한 의견을 조율하는 능력\n• 팀의 완충 역할을 자연스럽게 수행\n• 변화하는 환경에 빠르게 적응"}
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-2">💕 연애에서의 특성</h3>
+                <p className="text-sm leading-relaxed">
+                  {Math.abs(delta) <= 2 ?
+                    "• 상대방 성향에 완벽하게 맞춤\n• 리드와 팔로우를 자유자재로 전환\n• 모든 연애 스타일에 적응 가능\n• 최고의 연애 파트너 잠재력" :
+                    "• 상대방의 성향에 맞춰 유연하게 대응\n• 때로는 주도하고 때로는 따라가는 밸런스\n• 갈등 상황에서 중재 역할을 잘함\n• 안정적이면서도 역동적인 관계 추구"}
+                </p>
+              </div>
+            </div>
+          );
+        }
+      })()
+    };
   };
 
   // 궁합 상세 설명
@@ -287,8 +298,15 @@ function ResultContent() {
               {label}
             </h1>
             <p className="text-muted/80 text-sm">
-              {energy==="테토" ? "주도·직설·추진 에너지" :
-               energy==="에겐" ? "공감·조화·안정 에너지" :
+              {energy==="테토" ? 
+                strength === "L" ? "극도로 강한 주도·직설·추진 에너지" :
+                strength === "M" ? "뚜렷한 주도·직설·추진 에너지" :
+                "은은한 주도·직설·추진 에너지" :
+               energy==="에겐" ?
+                strength === "L" ? "극도로 강한 공감·조화·안정 에너지" :
+                strength === "M" ? "뚜렷한 공감·조화·안정 에너지" :
+                "은은한 공감·조화·안정 에너지" :
+               Math.abs(delta) <= 2 ? "완벽하게 균형잡힌 양면 에너지" :
                "문맥 따라 전환하는 균형 에너지"}
             </p>
             <p className="text-xs text-muted/60">
@@ -304,21 +322,38 @@ function ResultContent() {
           <span className="text-lg">🏷️</span> 키워드
         </h2>
         <div className="flex flex-wrap gap-2">
-          {energy==="테토" && ["결단","직설","리드","실행","돌파"].map((k, i)=>
-            <div key={k} className="animate-in slide-in-from-bottom duration-300" style={{animationDelay: `${i * 100 + 400}ms`}}>
-              <Badge>{k}</Badge>
-            </div>
-          )}
-          {energy==="에겐" && ["공감","중재","조화","안정","분위기"].map((k, i)=>
-            <div key={k} className="animate-in slide-in-from-bottom duration-300" style={{animationDelay: `${i * 100 + 400}ms`}}>
-              <Badge>{k}</Badge>
-            </div>
-          )}
-          {energy==="밸런스" && ["유연","상황판단","스위치","팀워크","균형"].map((k, i)=>
-            <div key={k} className="animate-in slide-in-from-bottom duration-300" style={{animationDelay: `${i * 100 + 400}ms`}}>
-              <Badge>{k}</Badge>
-            </div>
-          )}
+          {energy==="테토" && (() => {
+            let keywords = [];
+            if (strength === "L") keywords = ["극강리더","독단","폭풍돌파","철벽결단","지배력"];
+            else if (strength === "M") keywords = ["결단","직설","리드","실행","돌파"];
+            else keywords = ["온화리드","부드러운추진","섬세결단","차분실행","조심돌파"];
+            return keywords.map((k, i) => 
+              <div key={k} className="animate-in slide-in-from-bottom duration-300" style={{animationDelay: `${i * 100 + 400}ms`}}>
+                <Badge>{k}</Badge>
+              </div>
+            );
+          })()}
+          {energy==="에겐" && (() => {
+            let keywords = [];
+            if (strength === "L") keywords = ["극공감","완벽중재","절대조화","깊은안정","천사분위기"];
+            else if (strength === "M") keywords = ["공감","중재","조화","안정","분위기"];
+            else keywords = ["가벼운공감","소소한중재","은은한조화","평온","차분"];
+            return keywords.map((k, i) => 
+              <div key={k} className="animate-in slide-in-from-bottom duration-300" style={{animationDelay: `${i * 100 + 400}ms`}}>
+                <Badge>{k}</Badge>
+              </div>
+            );
+          })()}
+          {energy==="밸런스" && (() => {
+            let keywords = [];
+            if (Math.abs(delta) <= 2) keywords = ["완전균형","양면성","멀티플레이어","카멜레온","만능"];
+            else keywords = ["유연","상황판단","스위치","팀워크","균형"];
+            return keywords.map((k, i) => 
+              <div key={k} className="animate-in slide-in-from-bottom duration-300" style={{animationDelay: `${i * 100 + 400}ms`}}>
+                <Badge>{k}</Badge>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
@@ -403,7 +438,7 @@ function ResultContent() {
           className="w-full h-12 bg-gradient-to-r from-surface to-surface/80 border-2 border-border hover:border-white/30 transition-all duration-300"
         >
           <span className="text-lg mr-2">📊</span>
-          <span className="font-semibold">{energy} 타입 완전 분석 보기</span>
+          <span className="font-semibold">{label} 완전 분석 보기</span>
         </Button>
       </div>
 
@@ -469,9 +504,9 @@ function ResultContent() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={detailDescriptions[energy].title}
+        title={getDetailDescription().title}
       >
-        {detailDescriptions[energy].content}
+        {getDetailDescription().content}
       </Modal>
 
       {/* 점수 설명 모달 */}
